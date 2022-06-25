@@ -1,0 +1,7 @@
+{
+  "watch": ["./**/*.go"],
+  "ext": "go,json",
+  "signal": "SIGTERM",
+  "ignore": ["*gen*.go"],
+  "exec": "clear \n go run main.go && (killall -9 server || true )"
+}
