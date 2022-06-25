@@ -69,13 +69,13 @@ func (c *TblUserDelete) Delete() error {
 }
 
 func (c *TblUsers) Get(r *http.Request) ([]TblUsers, int64, error) {
-	var sizes []TblUsers
+	var users []TblUsers
 
-	ctxTotal := DB.Select("id as count").Find(&sizes)
+	ctxTotal := DB.Select("id as count").Find(&users)
 
-	ctx := DB.Scopes(paginate(r), order(r, []string{"id", "name"})).Find(&sizes)
+	ctx := DB.Scopes(paginate(r), order(r, []string{"id", "name"})).Find(&users)
 
-	return sizes, ctxTotal.RowsAffected, ctx.Error
+	return users, ctxTotal.RowsAffected, ctx.Error
 
 }
 
