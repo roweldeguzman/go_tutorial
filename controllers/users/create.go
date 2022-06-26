@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func Create(w http.ResponseWriter, r *http.Request) {
+func Create(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	body, mgs := utils.HttpReq(r)
 
 	if body == nil {
@@ -28,7 +28,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		FirstName:  firstName,
 		LastName:   lastName,
 		Email:      email,
-		Password:   password,
+		Password:   utils.MakePassword(password),
 		UserStatus: userStatus,
 	}
 	validate := validation.Validate()

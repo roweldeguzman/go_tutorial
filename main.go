@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/rs/cors"
 	"github.com/urfave/negroni"
@@ -18,7 +17,7 @@ func initDatabase() {
 	if err := database.Open(); err != nil {
 		panic("Fail to connect to database")
 	}
-	fmt.Println(os.Getenv("APP_ENV"))
+
 	fmt.Println("Database connection successfully opened.")
 }
 

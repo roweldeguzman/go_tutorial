@@ -7,7 +7,8 @@ import (
 func LoadRouter() *mux.Router {
 	router := mux.NewRouter()
 
-	router = UsersRoute(router)
+	router = usersRoute(router)
+	router = auth(router)
 
 	return router
 }

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"api/utils"
 	"errors"
 	"net/http"
 
@@ -85,5 +86,15 @@ func (c *TblUsers) GetInfo() error {
 		return errors.New("Unable to find user.")
 	}
 
+	return ctx.Error
+}
+
+func (c *TblUsers) FindUser() error {
+
+	ctx := DB.Where("email=? AND password=?", c.Email, utils.MakePassword(c.Password)).Find(&c)
+
+	if ctx.RowsAffected == 0 {
+		return errors.New("Wrong username or password.")
+	}
 	return ctx.Error
 }
