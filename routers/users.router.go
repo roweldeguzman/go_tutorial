@@ -1,8 +1,8 @@
 package routers
 
 import (
+	"api/authorization"
 	u "api/controllers/users"
-	"api/security"
 
 	"github.com/gorilla/mux"
 	"github.com/urfave/negroni"
@@ -12,7 +12,7 @@ func usersRoute(router *mux.Router) *mux.Router {
 
 	router.Handle("/v1/users/add",
 		negroni.New(
-			negroni.HandlerFunc(security.IsAuthorized),
+			negroni.HandlerFunc(authorization.IsAuthorized),
 			negroni.HandlerFunc(u.Create),
 		)).
 		Methods("POST")

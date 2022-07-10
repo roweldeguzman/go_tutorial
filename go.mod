@@ -10,6 +10,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/rs/cors v1.8.2
+	github.com/stretchr/testify v1.7.5
 	github.com/urfave/negroni v1.0.0
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/sys v0.0.0-20220624220833-87e55d714810 // indirect

@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"api/authorization"
 	"api/models"
-	"api/security"
 	"api/utils"
 	"net/http"
 	"strings"
@@ -14,7 +14,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if body == nil {
 		utils.Response(map[string]interface{}{
 			"statusCode": 500,
-			"devMessage": "Invalid username or password " + mgs,
+			"devMessage": "Invalid username or password. " + mgs,
 		}, 500, w)
 		return
 	}
@@ -41,7 +41,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := security.GenerateJWT(map[string]interface{}{
+	token, err := authorization.GenerateJWT(map[string]interface{}{
 		"email": user.Email,
 		"id":    user.ID,
 	})
