@@ -3,6 +3,7 @@ package models
 import (
 	"api/utils"
 	"errors"
+	"log"
 	"net/http"
 
 	"gorm.io/gorm"
@@ -27,7 +28,7 @@ func (c *TblUsers) BeforeCreate(tx *gorm.DB) (err error) {
 	ctx := DB.Where("email = ?", c.Email).Find(&c)
 
 	if ctx.RowsAffected != 0 {
-		return errors.New("User already exists")
+		return errors.New("User already exists.")
 	}
 
 	return nil
@@ -71,12 +72,14 @@ func (c *TblUserDelete) Delete() error {
 
 func (c *TblUsers) Get(r *http.Request) ([]TblUsers, int64, error) {
 	var users []TblUsers
+	var userCount int64
 
-	ctxTotal := DB.Select("id as count").Find(&users)
+	DB.Model(&TblUsers{}).Count(&userCount)
 
 	ctx := DB.Scopes(paginate(r), order(r, []string{"id", "name"})).Find(&users)
 
-	return users, ctxTotal.RowsAffected, ctx.Error
+	log.Println(userCount)
+	return users, userCount, ctx.Error
 
 }
 

@@ -6,6 +6,22 @@ import (
 	"net/http"
 )
 
+type ResCode struct {
+	OK       int
+	EXIST    int
+	NOTFOUND int
+	ISE      int
+	INVALID  int
+}
+
+var Code = ResCode{
+	OK:       200,
+	EXIST:    201,
+	NOTFOUND: 404,
+	ISE:      500,
+	INVALID:  406,
+}
+
 func Response(data interface{}, responseStatus int, w http.ResponseWriter) {
 	jData, err := json.Marshal(data)
 	if err != nil {
