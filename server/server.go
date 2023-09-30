@@ -13,24 +13,8 @@ import (
 	"github.com/urfave/negroni"
 )
 
-type ResponseCode struct {
-	OK       int
-	EXIST    int
-	NOTFOUND int
-	ISE      int
-	INVALID  int
-}
-
 type App struct {
 	Router *mux.Router
-}
-
-var responseCode = ResponseCode{
-	OK:       200,
-	EXIST:    201,
-	NOTFOUND: 404,
-	ISE:      500,
-	INVALID:  406,
 }
 
 func initDatabase() {
@@ -38,6 +22,7 @@ func initDatabase() {
 	if err := database.Open(); err != nil {
 		panic("Fail to connect to database")
 	}
+	defer database.Close()
 }
 
 func (a *App) Initialize() {
