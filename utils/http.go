@@ -2,9 +2,25 @@ package utils
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
+
+type ResCode struct {
+	OK       int
+	EXIST    int
+	NOTFOUND int
+	ISE      int
+	INVALID  int
+}
+
+var Code = ResCode{
+	OK:       200,
+	EXIST:    201,
+	NOTFOUND: 404,
+	ISE:      500,
+	INVALID:  406,
+}
 
 func Response(data interface{}, responseStatus int, w http.ResponseWriter) {
 	jData, err := json.Marshal(data)
@@ -17,7 +33,7 @@ func Response(data interface{}, responseStatus int, w http.ResponseWriter) {
 }
 
 func HttpReq(req *http.Request) (map[string]interface{}, string) {
-	body, err := ioutil.ReadAll(req.Body)
+	body, err := io.ReadAll(req.Body)
 	if err == nil {
 		jsonData := make(map[string]interface{})
 		ErrorChecker(0, json.Unmarshal(body, &jsonData))

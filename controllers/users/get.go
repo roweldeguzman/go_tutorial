@@ -7,6 +7,7 @@ import (
 )
 
 func Get(w http.ResponseWriter, r *http.Request) {
+
 	page := utils.PagerTernary(r.FormValue("page"), 1)
 	rows := utils.PagerTernary(r.FormValue("rows"), 10)
 
@@ -28,6 +29,6 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		"statusCode": 200,
 		"devMessage": users,
 		"paginate":   utils.Paginate(rows, page, int(total)),
-	}, 200, w)
+	}, utils.Code.OK, w)
 
 }

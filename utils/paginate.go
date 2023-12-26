@@ -21,6 +21,10 @@ func PagerTernary(val string, defVal int) int {
 	if strings.Trim(val, " ") == "" {
 		return defVal
 	}
-	newVal, _ := strconv.Atoi(val)
+	newVal, isError := strconv.Atoi(val)
+	if isError != nil {
+		return defVal
+	}
+
 	return newVal
 }
