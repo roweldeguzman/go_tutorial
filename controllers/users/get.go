@@ -3,12 +3,11 @@ package users
 import (
 	"api/models"
 	"api/utils"
-	"fmt"
 	"net/http"
 )
 
 func Get(w http.ResponseWriter, r *http.Request) {
-	fmt.Println()
+
 	page := utils.PagerTernary(r.FormValue("page"), 1)
 	rows := utils.PagerTernary(r.FormValue("rows"), 10)
 

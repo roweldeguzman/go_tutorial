@@ -22,7 +22,7 @@ func initDatabase() {
 	if err := database.Open(); err != nil {
 		panic("Fail to connect to database")
 	}
-	defer database.Close()
+
 }
 
 func (a *App) Initialize() {

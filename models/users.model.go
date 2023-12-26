@@ -3,7 +3,6 @@ package models
 import (
 	"api/utils"
 	"errors"
-	"log"
 	"net/http"
 
 	"gorm.io/gorm"
@@ -78,7 +77,6 @@ func (c *TblUsers) Get(r *http.Request) ([]TblUsers, int64, error) {
 
 	ctx := DB.Scopes(paginate(r), order(r, []string{"id", "name"})).Find(&users)
 
-	log.Println(userCount)
 	return users, userCount, ctx.Error
 
 }
