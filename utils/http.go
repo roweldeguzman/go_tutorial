@@ -2,7 +2,7 @@ package utils
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -33,7 +33,7 @@ func Response(data interface{}, responseStatus int, w http.ResponseWriter) {
 }
 
 func HttpReq(req *http.Request) (map[string]interface{}, string) {
-	body, err := ioutil.ReadAll(req.Body)
+	body, err := io.ReadAll(req.Body)
 	if err == nil {
 		jsonData := make(map[string]interface{})
 		ErrorChecker(0, json.Unmarshal(body, &jsonData))
