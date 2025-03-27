@@ -1,1 +1,1 @@
-make tutorial
+make build
