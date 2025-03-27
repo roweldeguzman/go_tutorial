@@ -1,12 +1,9 @@
 package service
 
 import (
-	"api/database"
 	"api/models"
 	"api/repository"
 	"api/struct/pagination"
-	"errors"
-	"fmt"
 )
 
 type UserService struct {
@@ -14,7 +11,6 @@ type UserService struct {
 }
 
 func NewUserService(repo *repository.UserRepository) *UserService {
-
 	return &UserService{repo}
 }
 
@@ -23,28 +19,21 @@ func (s *UserService) Create(user *models.Users) (*models.Users, error) {
 }
 
 func (s *UserService) Update(user *models.Users) error {
-
-	ctx := database.DB.Model(&user).Where("id = ?", user.ID).Updates(models.Users{
-		FirstName:  user.FirstName,
-		LastName:   user.LastName,
-		Email:      user.Email,
-		UserStatus: user.UserStatus,
-	})
-
-	return ctx.Error
+	return s.repo.Update(user)
 }
 
-func (*UserService) Delete(user *models.UserDelete) error {
-	fmt.Println(user)
-	ctx := database.DB.Delete(&models.Users{}, user.IDS)
-	if ctx.RowsAffected == 0 {
-		return errors.New("No user deleted. User not found.")
-	}
-	return nil
+func (s *UserService) Delete(user *models.UserDelete) error {
+	return s.repo.Delete(user)
 }
 
 func (s *UserService) Get(pageParams pagination.PageParam, sortParams pagination.SortParam) ([]models.Users, int64, error) {
-
 	return s.repo.Get(pageParams, sortParams)
+}
 
+func (s *UserService) GetInfo(user *models.Users) error {
+	return s.repo.GetInfo(user)
+}
+
+func (s *UserService) FindUser(user *models.Users) ([]models.Users, error) {
+	return s.repo.FindUser(user)
 }

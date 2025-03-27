@@ -23,7 +23,8 @@ func usersRoute(router *mux.Router) *mux.Router {
 	userRouter.HandleFunc("/update", UserController.Update).Methods("PUT")
 	userRouter.HandleFunc("/delete", UserController.Delete).Methods("DELETE")
 	userRouter.HandleFunc("/get", UserController.Get).Methods("GET")
-	// userRouter.HandleFunc("/get-info/{id}", users.GetInfo).Methods("GET")
+	userRouter.HandleFunc("/get-info/{id}", UserController.GetInfo).Methods("GET")
+	userRouter.HandleFunc("/find-user", UserController.FindUser).Methods("GET")
 
 	router.PathPrefix("/v1/users").Handler(negroni.New(
 		negroni.HandlerFunc(authorization.IsAuthorized),

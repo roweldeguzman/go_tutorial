@@ -83,6 +83,7 @@ func (c *Users) Get(r *http.Request) ([]Users, int64, error) {
 
 func (c *Users) GetInfo() error {
 	ctx := DB.Find(&c)
+
 	if ctx.RowsAffected == 0 {
 		return errors.New("Unable to find user.")
 	}
