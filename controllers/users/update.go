@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func Update(w http.ResponseWriter, r *http.Request) {
+func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	body, mgs := utils.HttpReq(r)
 
 	if body == nil {
@@ -22,7 +22,6 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	firstName, _ := body["firstName"].(string)
 	lastName, _ := body["lastName"].(string)
 	email, _ := body["email"].(string)
-	password, _ := body["password"].(string)
 	userStatus, _ := body["userStatus"].(string)
 
 	user := models.Users{
@@ -30,9 +29,10 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		FirstName:  firstName,
 		LastName:   lastName,
 		Email:      email,
-		Password:   password,
 		UserStatus: userStatus,
+		Password:   "noValidate",
 	}
+
 	validate := validation.Validate()
 	err := validate.Struct(user)
 
@@ -45,7 +45,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := user.Update(); err != nil {
+	if err := c.service.Update(&user); err != nil {
 		utils.Response(map[string]interface{}{
 			"statusCode": 500,
 			"devMessage": err.Error(),
@@ -57,5 +57,4 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		"statusCode": 200,
 		"devMessage": user.ID,
 	}, 200, w)
-
 }

@@ -2,8 +2,10 @@ package main
 
 import (
 	controller "api/controllers"
-	"api/controllers/users"
+	user "api/controllers/users"
+	"api/repository"
 	"api/server"
+	"api/service"
 	"bytes"
 	"encoding/json"
 	"net/http"
@@ -15,6 +17,12 @@ import (
 )
 
 var app server.App
+
+var (
+	userRepository = repository.NewUserRepository()
+	userService    = service.NewUserService(userRepository)
+	UserController = user.NewUserController(userService)
+)
 
 func TestMain(m *testing.M) {
 	app = server.App{}
@@ -32,7 +40,7 @@ func executeRequest(request *http.Request, handler http.HandlerFunc) *httptest.R
 
 func TestLogin(t *testing.T) {
 
-	var jsonStr = []byte(`{"email":"rowel1@gmail.com", "password": "admin"}`)
+	var jsonStr = []byte(`{"email":"rowel@gmail.com", "password": "admin"}`)
 	request, _ := http.NewRequest("POST", "/v1/auth/login", bytes.NewBuffer(jsonStr))
 	request.Header.Set("Content-Type", "application/json")
 	handler := http.HandlerFunc(controller.Login)
@@ -57,18 +65,18 @@ func TestGetUsers(t *testing.T) {
 	query.Add("page", "2")
 	request.URL.RawQuery = query.Encode()
 
-	handler := http.HandlerFunc(users.Get)
+	handler := http.HandlerFunc(UserController.Get)
 	response := executeRequest(request, handler)
 
-	var m map[string]interface{}
+	var m map[string]any
 	err := json.Unmarshal(response.Body.Bytes(), &m)
 
 	if err != nil {
 		t.Errorf("Unexpected response body found")
 	}
 
-	devMessage := m["devMessage"].([]interface{})
-	paginate := m["paginate"].(map[string]interface{})
+	devMessage := m["devMessage"].([]any)
+	paginate := m["paginate"].(map[string]any)
 
 	if m["statusCode"] != float64(200) {
 		t.Errorf("Wrong status code. expecting 200, got %v", m["statusCode"])

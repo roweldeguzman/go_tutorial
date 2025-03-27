@@ -1,23 +1,34 @@
 package users
 
 import (
-	"api/models"
+	"api/struct/pagination"
 	"api/utils"
 	"net/http"
 )
 
-func Get(w http.ResponseWriter, r *http.Request) {
+func (c *UserController) Get(w http.ResponseWriter, r *http.Request) {
+	page := utils.Ternary(r.URL.Query().Get("page"), 1)
+	rows := utils.Ternary(r.URL.Query().Get("rows"), 10)
+	orderBy := r.URL.Query().Get("orderBy") // desc or asc
+	sortBy := r.URL.Query().Get("sortBy")   // by model fields
+	groupBy := r.URL.Query().Get("groupBy") // by model fields
 
-	page := utils.Ternary(r.FormValue("page"), 1)
-	rows := utils.Ternary(r.FormValue("rows"), 10)
+	pageParams := pagination.PageParam{
+		Page: page,
+		Rows: rows,
+	}
 
-	TblUsers := models.Users{}
+	sortParams := pagination.SortParam{
+		OrderBy: orderBy,
+		SortBy:  sortBy,
+		GroupBy: groupBy,
+	}
 
-	users, total, err := TblUsers.Get(r)
+	users, total, err := c.service.Get(pageParams, sortParams)
 
 	if err != nil {
 
-		utils.Response(map[string]interface{}{
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": err.Error(),
 		}, 200, w)
@@ -25,10 +36,9 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.Response(map[string]interface{}{
+	utils.Response(map[string]any{
 		"statusCode": 200,
 		"devMessage": users,
 		"paginate":   utils.Paginate(rows, page, int(total)),
-	}, 200, w)
-
+	}, utils.Code.OK, w)
 }

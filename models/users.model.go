@@ -46,8 +46,7 @@ func (u *Users) BeforeUpdate(tx *gorm.DB) (err error) {
 
 func (c *Users) Create() error {
 	return nil
-	// ctx := DB.Create(&c)
-	// return ctx.Error
+
 }
 
 func (c *Users) Update() error {
