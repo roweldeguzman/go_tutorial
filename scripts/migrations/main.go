@@ -16,8 +16,8 @@ func initDatabase() {
 func main() {
 	initDatabase()
 
-	var db = database.Connect
-	models.DB = database.Connect
+	var db = database.DB
+	models.DB = database.DB
 
 	fmt.Println("Connected! Starting migration...")
 

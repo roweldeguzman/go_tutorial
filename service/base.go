@@ -1,23 +1,12 @@
-package models
+package service
 
 import (
-	"api/database"
 	"api/utils"
-	"database/sql"
 	"net/http"
 	"slices"
-	"time"
 
 	"gorm.io/gorm"
 )
-
-var DB = database.DB
-
-type DateModel struct {
-	CreatedAt time.Time    `json:"createdAt"`
-	UpdatedAt time.Time    `json:"updatedAt"`
-	DeletedAt sql.NullTime `json:"-" gorm:"index"`
-}
 
 func paginate(r *http.Request) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {

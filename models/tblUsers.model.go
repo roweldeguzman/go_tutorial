@@ -1,28 +1,27 @@
 package models
 
 import (
-	"api/utils"
 	"errors"
 	"net/http"
 
 	"gorm.io/gorm"
 )
 
-type TblUsers struct {
+type Users struct {
 	ID         uint   `json:"id" gorm:"primaryKey"`
 	FirstName  string `json:"firstName" gorm:"type:varchar(255)" validate:"required,min=3"`
 	LastName   string `json:"lastName" gorm:"type:varchar(255)" validate:"required"`
 	Email      string `json:"email" gorm:"type:varchar(255)" validate:"required,email"`
-	Password   string `json:"-" gorm:"type:varchar(255)" validate:"required"`
+	Password   string `json:"-" gorm:"type:varchar(255)" validate:"validPassword"`
 	UserStatus string `json:"-" gorm:"type:ENUM('0', '1') default '0' comment '0=For verification, 1=Verified User'"`
 	DateModel
 }
 
-type TblUserDelete struct {
+type UserDelete struct {
 	IDS []uint
 }
 
-func (c *TblUsers) BeforeCreate(tx *gorm.DB) (err error) {
+func (c *Users) BeforeCreate(tx *gorm.DB) (err error) {
 
 	ctx := DB.Where("email = ?", c.Email).Find(&c)
 
@@ -33,25 +32,26 @@ func (c *TblUsers) BeforeCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-func (c *TblUsers) BeforeUpdate(tx *gorm.DB) (err error) {
+func (u *Users) BeforeUpdate(tx *gorm.DB) (err error) {
 
-	var user TblUsers
-	ctx := DB.Where("email = ?", c.Email).Find(&user)
+	var user Users
+	ctx := DB.Where("email = ?", u.Email).Find(&user)
 
-	if ctx.RowsAffected != 0 && user.ID != c.ID {
+	if ctx.RowsAffected != 0 && user.ID != u.ID {
 		return errors.New("User already exists.")
 	}
 
 	return nil
 }
 
-func (c *TblUsers) Create() error {
-	ctx := DB.Create(&c)
-	return ctx.Error
+func (c *Users) Create() error {
+	return nil
+	// ctx := DB.Create(&c)
+	// return ctx.Error
 }
 
-func (c *TblUsers) Update() error {
-	ctx := DB.Model(&c).Where("id = ?", c.ID).Updates(TblUsers{
+func (c *Users) Update() error {
+	ctx := DB.Model(&c).Where("id = ?", c.ID).Updates(Users{
 		FirstName:  c.FirstName,
 		LastName:   c.LastName,
 		Email:      c.Email,
@@ -61,17 +61,19 @@ func (c *TblUsers) Update() error {
 	return ctx.Error
 }
 
-func (c *TblUserDelete) Delete() error {
-	ctx := DB.Delete(&TblUsers{}, c.IDS)
+func (c *UserDelete) Delete() error {
+	ctx := DB.Delete(&Users{}, c.IDS)
 	if ctx.RowsAffected == 0 {
 		return errors.New("No user deleted. User not found.")
 	}
 	return nil
 }
 
-func (c *TblUsers) Get(r *http.Request) ([]TblUsers, int64, error) {
-	var users []TblUsers
+func (c *Users) Get(r *http.Request) ([]Users, int64, error) {
+	var users []Users
+	var userCount int64
 
+	DB.Model(&Users{}).Count(&userCount)
 	ctxTotal := DB.Select("id as count").Find(&users)
 
 	ctx := DB.Scopes(paginate(r), order(r, []string{"id", "name"})).Find(&users)
@@ -80,7 +82,7 @@ func (c *TblUsers) Get(r *http.Request) ([]TblUsers, int64, error) {
 
 }
 
-func (c *TblUsers) GetInfo() error {
+func (c *Users) GetInfo() error {
 	ctx := DB.Find(&c)
 	if ctx.RowsAffected == 0 {
 		return errors.New("Unable to find user.")
@@ -89,12 +91,13 @@ func (c *TblUsers) GetInfo() error {
 	return ctx.Error
 }
 
-func (c *TblUsers) FindUser() error {
+func (c *Users) FindUser() error {
 
-	ctx := DB.Where("email=? AND password=?", c.Email, utils.MakePassword(c.Password)).Find(&c)
+	ctx := DB.Where("email=?", c.Email).Find(&c)
 
 	if ctx.RowsAffected == 0 {
 		return errors.New("Wrong username or password.")
 	}
+
 	return ctx.Error
 }

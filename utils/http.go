@@ -2,11 +2,11 @@ package utils
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
-func Response(data interface{}, responseStatus int, w http.ResponseWriter) {
+func Response[T any](data T, responseStatus int, w http.ResponseWriter) {
 	jData, err := json.Marshal(data)
 	if err != nil {
 		panic(err.Error())
@@ -16,10 +16,10 @@ func Response(data interface{}, responseStatus int, w http.ResponseWriter) {
 	ErrorChecker(w.Write(jData))
 }
 
-func HttpReq(req *http.Request) (map[string]interface{}, string) {
-	body, err := ioutil.ReadAll(req.Body)
+func HttpReq(req *http.Request) (map[string]any, string) {
+	body, err := io.ReadAll(req.Body)
 	if err == nil {
-		jsonData := make(map[string]interface{})
+		jsonData := make(map[string]any)
 		ErrorChecker(0, json.Unmarshal(body, &jsonData))
 		if len(jsonData) != 0 {
 			return jsonData, ""

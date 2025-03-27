@@ -7,10 +7,11 @@ import (
 )
 
 func Get(w http.ResponseWriter, r *http.Request) {
-	page := utils.PagerTernary(r.FormValue("page"), 1)
-	rows := utils.PagerTernary(r.FormValue("rows"), 10)
 
-	TblUsers := models.TblUsers{}
+	page := utils.Ternary(r.FormValue("page"), 1)
+	rows := utils.Ternary(r.FormValue("rows"), 10)
+
+	TblUsers := models.Users{}
 
 	users, total, err := TblUsers.Get(r)
 

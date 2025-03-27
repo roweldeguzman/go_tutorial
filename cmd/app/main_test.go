@@ -1,7 +1,7 @@
 package main
 
 import (
-	"api/controllers"
+	controller "api/controllers"
 	"api/controllers/users"
 	"api/server"
 	"bytes"
@@ -35,7 +35,7 @@ func TestLogin(t *testing.T) {
 	var jsonStr = []byte(`{"email":"rowel1@gmail.com", "password": "admin"}`)
 	request, _ := http.NewRequest("POST", "/v1/auth/login", bytes.NewBuffer(jsonStr))
 	request.Header.Set("Content-Type", "application/json")
-	handler := http.HandlerFunc(controllers.Login)
+	handler := http.HandlerFunc(controller.Login)
 
 	response := executeRequest(request, handler)
 

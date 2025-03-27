@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-var Connect *gorm.DB
+var DB *gorm.DB
 
 func Open() error {
 
@@ -25,7 +25,7 @@ func Open() error {
 			IgnoreRecordNotFoundError: true,
 		},
 	)
-	Connect, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
@@ -40,6 +40,6 @@ func Open() error {
 }
 
 func Close() error {
-	DB, _ := Connect.DB()
+	DB, _ := DB.DB()
 	return DB.Close()
 }

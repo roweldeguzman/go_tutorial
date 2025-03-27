@@ -21,7 +21,7 @@ func GetInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := models.TblUsers{
+	user := models.Users{
 		ID: uint(ID),
 	}
 

@@ -3,6 +3,7 @@ package server
 import (
 	"api/database"
 	"api/models"
+	"api/repository"
 	"api/routers"
 	"fmt"
 	"log"
@@ -24,7 +25,8 @@ func initDatabase() {
 	}
 }
 
-func (a *App) Initialize() {
+func (app *App) Initialize() {
+
 	c := cors.New(cors.Options{
 		AllowCredentials:   true,
 		OptionsPassthrough: false,
@@ -35,16 +37,19 @@ func (a *App) Initialize() {
 
 	initDatabase()
 
-	models.DB = database.Connect
-	a.Router = routers.LoadRouter()
+	models.DB = database.DB
+	repository.DB = database.DB
+
+	app.Router = routers.LoadRouter()
 
 	n := negroni.Classic()
 	n.Use(c)
-	n.UseHandler(a.Router)
+	n.UseHandler(app.Router)
 
 }
 
-func (a *App) Run(port string) {
+func (app *App) Run(port string) {
+
 	fmt.Print("http://localhost" + port + "\n")
-	log.Fatal(http.ListenAndServe(port, a.Router))
+	log.Fatal(http.ListenAndServe(port, app.Router))
 }

@@ -1,4 +1,4 @@
-package controllers
+package controller
 
 import (
 	"api/authorization"
@@ -28,15 +28,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}, 200, w)
 		return
 	}
-	user := models.TblUsers{
-		Email:    email,
-		Password: password,
-	}
+	user := models.Users{Email: email}
 
 	if err := user.FindUser(); err != nil {
 		utils.Response(map[string]interface{}{
 			"statusCode": 500,
 			"devMessage": err.Error(),
+		}, 200, w)
+		return
+	} else if err := utils.ComparePasswords(user.Password, password); err != nil {
+		utils.Response(map[string]interface{}{
+			"statusCode": 500,
+			"devMessage": "Wrong username or Password.",
 		}, 200, w)
 		return
 	}

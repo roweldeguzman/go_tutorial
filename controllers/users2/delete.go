@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func Delete(w http.ResponseWriter, r *http.Request) {
+func (c *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 	body, mgs := utils.HttpReq(r)
 
 	if body == nil {
@@ -28,7 +28,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	deletes := models.UserDelete{
 		IDS: ids,
 	}
-	if err := deletes.Delete(); err != nil {
+	if err := c.service.Delete(&deletes); err != nil {
 		utils.Response(map[string]interface{}{
 			"statusCode": 500,
 			"devMessage": err.Error(),
@@ -40,5 +40,4 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		"statusCode": 200,
 		"devMessage": "success",
 	}, 200, w)
-
 }

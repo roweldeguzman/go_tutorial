@@ -25,7 +25,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	password, _ := body["password"].(string)
 	userStatus, _ := body["userStatus"].(string)
 
-	user := models.TblUsers{
+	user := models.Users{
 		ID:         uint(id),
 		FirstName:  firstName,
 		LastName:   lastName,

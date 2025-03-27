@@ -1,28 +1,19 @@
-package models
+package repository
 
 import (
 	"api/database"
-	"api/utils"
-	"database/sql"
-	"net/http"
+	"api/struct/pagination"
 	"slices"
-	"time"
 
 	"gorm.io/gorm"
 )
 
 var DB = database.DB
 
-type DateModel struct {
-	CreatedAt time.Time    `json:"createdAt"`
-	UpdatedAt time.Time    `json:"updatedAt"`
-	DeletedAt sql.NullTime `json:"-" gorm:"index"`
-}
-
-func paginate(r *http.Request) func(db *gorm.DB) *gorm.DB {
+func paginate(pageParam pagination.PageParam) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		page := utils.Ternary(r.FormValue("page"), 1)
-		rows := utils.Ternary(r.FormValue("rows"), 10)
+		page := pageParam.Page
+		rows := pageParam.Rows
 
 		if page == 0 {
 			page = 1
@@ -40,12 +31,12 @@ func paginate(r *http.Request) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func order(r *http.Request, fields []string) func(db *gorm.DB) *gorm.DB {
+func order(sortParam pagination.SortParam, fields []string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 
-		orderBy := r.URL.Query().Get("orderBy") // desc or asc
-		sortBy := r.URL.Query().Get("sortBy")   // by model fields
-		groupBy := r.URL.Query().Get("groupBy") // by model fields
+		orderBy := sortParam.OrderBy // desc or asc
+		sortBy := sortParam.SortBy   // by model fields
+		groupBy := sortParam.GroupBy // by model fields
 
 		if orderBy == "" || !slices.Contains([]string{"desc", "asc"}, orderBy) {
 			orderBy = "desc"
