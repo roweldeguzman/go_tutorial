@@ -3,14 +3,12 @@ package main
 import (
 	"api/models"
 	"api/utils"
-
-	"gorm.io/gorm"
+	"fmt"
 )
 
-func TblUsers(db *gorm.DB) {
+func tblUsers() {
 
 	hashPassword, _ := utils.HashPassword("admin")
-	table := &models.Users{}
 	columns := models.Users{
 		FirstName:  "Rowel",
 		LastName:   "de Guzman",
@@ -18,10 +16,10 @@ func TblUsers(db *gorm.DB) {
 		Password:   hashPassword,
 		UserStatus: "1",
 	}
-	if exist := db.Migrator().HasTable(table); !exist {
-		utils.ErrorChecker(0, db.AutoMigrate(table))
 
-		utils.ErrorChecker(0, columns.Create())
+	ctx := db.Create(&columns)
+
+	if ctx.Error != nil {
+		fmt.Println(ctx.Error)
 	}
-
 }

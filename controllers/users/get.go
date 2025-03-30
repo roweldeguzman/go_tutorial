@@ -2,6 +2,7 @@ package users
 
 import (
 	"api/struct/pagination"
+	"api/struct/response"
 	"api/utils"
 	"net/http"
 )
@@ -13,12 +14,12 @@ func (c *UserController) Get(w http.ResponseWriter, r *http.Request) {
 	sortBy := r.URL.Query().Get("sortBy")   // by model fields
 	groupBy := r.URL.Query().Get("groupBy") // by model fields
 
-	pageParams := pagination.PageParam{
+	pageParams := pagination.PagingOptions{
 		Page: page,
 		Rows: rows,
 	}
 
-	sortParams := pagination.SortParam{
+	sortParams := pagination.SortingOptions{
 		OrderBy: orderBy,
 		SortBy:  sortBy,
 		GroupBy: groupBy,
@@ -40,5 +41,5 @@ func (c *UserController) Get(w http.ResponseWriter, r *http.Request) {
 		"statusCode": 200,
 		"devMessage": users,
 		"paginate":   utils.Paginate(rows, page, int(total)),
-	}, utils.Code.OK, w)
+	}, response.Code.OK, w)
 }

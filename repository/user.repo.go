@@ -39,7 +39,7 @@ func (r *UserRepository) Delete(user *models.UserDelete) error {
 	return nil
 }
 
-func (r *UserRepository) Get(pageParams pagination.PageParam, sortParams pagination.SortParam) ([]models.Users, int64, error) {
+func (r *UserRepository) Get(pageParams pagination.PagingOptions, sortParams pagination.SortingOptions) ([]models.Users, int64, error) {
 
 	var users []models.Users
 	var userCount int64
@@ -62,14 +62,25 @@ func (r *UserRepository) GetInfo(user *models.Users) error {
 	return ctx.Error
 }
 
-func (r *UserRepository) FindUser(user *models.Users) ([]models.Users, error) {
+func (r *UserRepository) SearchUser(user *models.Users) ([]models.Users, error) {
 	var users []models.Users
 
-	ctx := DB.Where("email=?", user.Email).Find(&users)
+	ctx := DB.Where("email LIKE ?", "%"+user.Email+"%").Find(&users)
+
+	if ctx.RowsAffected == 0 {
+		return nil, errors.New("No result found.")
+	}
+
+	return users, ctx.Error
+}
+
+func (r *UserRepository) FindUser(user *models.Users) (*models.Users, error) {
+
+	ctx := DB.Where("email=?", user.Email).Find(&user)
 
 	if ctx.RowsAffected == 0 {
 		return nil, errors.New("Wrong username or password.")
 	}
 
-	return users, ctx.Error
+	return user, ctx.Error
 }

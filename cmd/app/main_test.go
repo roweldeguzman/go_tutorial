@@ -22,6 +22,7 @@ var (
 	userRepository = repository.NewUserRepository()
 	userService    = service.NewUserService(userRepository)
 	UserController = user.NewUserController(userService)
+	authController = controller.NewAuthController(userService)
 )
 
 func TestMain(m *testing.M) {
@@ -43,11 +44,11 @@ func TestLogin(t *testing.T) {
 	var jsonStr = []byte(`{"email":"rowel@gmail.com", "password": "admin"}`)
 	request, _ := http.NewRequest("POST", "/v1/auth/login", bytes.NewBuffer(jsonStr))
 	request.Header.Set("Content-Type", "application/json")
-	handler := http.HandlerFunc(controller.Login)
+	handler := http.HandlerFunc(authController.Login)
 
 	response := executeRequest(request, handler)
 
-	var m map[string]interface{}
+	var m map[string]any
 	err := json.Unmarshal(response.Body.Bytes(), &m)
 
 	if err != nil {

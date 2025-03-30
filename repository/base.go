@@ -10,7 +10,7 @@ import (
 
 var DB = database.DB
 
-func paginate(pageParam pagination.PageParam) func(db *gorm.DB) *gorm.DB {
+func paginate(pageParam pagination.PagingOptions) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		page := pageParam.Page
 		rows := pageParam.Rows
@@ -31,7 +31,7 @@ func paginate(pageParam pagination.PageParam) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func order(sortParam pagination.SortParam, fields []string) func(db *gorm.DB) *gorm.DB {
+func order(sortParam pagination.SortingOptions, fields []string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 
 		orderBy := sortParam.OrderBy // desc or asc
