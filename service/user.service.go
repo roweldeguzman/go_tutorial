@@ -4,7 +4,6 @@ import (
 	"api/models"
 	"api/repository"
 	"api/struct/pagination"
-	"fmt"
 )
 
 type UserService struct {
@@ -16,9 +15,6 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 }
 
 func (s *UserService) Create(user *models.Users) (*models.Users, error) {
-	fmt.Println("this is from migration", user)
-
-	fmt.Println(s)
 	return s.repo.Create(user)
 }
 

@@ -27,6 +27,7 @@ require (
 )
 
 require (
-	golang.org/x/text v0.3.7 // indirect
+	github.com/go-faker/faker/v4 v4.6.0 // indirect
+	golang.org/x/text v0.23.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

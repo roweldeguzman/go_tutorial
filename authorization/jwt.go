@@ -13,7 +13,7 @@ import (
 
 var secretKey = "ThisIsRealSecretB*tch"
 
-func GenerateJWT(data map[string]interface{}) (string, error) {
+func GenerateJWT(data map[string]any) (string, error) {
 	var mySigningKey = []byte(secretKey)
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
