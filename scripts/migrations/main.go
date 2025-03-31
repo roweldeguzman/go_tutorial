@@ -4,7 +4,11 @@ import (
 	"api/database"
 	"api/models"
 	"fmt"
+
+	"gorm.io/gorm"
 )
+
+var db *gorm.DB
 
 func initDatabase() {
 
@@ -16,13 +20,15 @@ func initDatabase() {
 func main() {
 	initDatabase()
 
-	var db = database.Connect
-	models.DB = database.Connect
+	db = database.DB
+	models.DB = database.DB
 
 	fmt.Println("Connected! Starting migration...")
 
 	defer database.Close()
-	TblUsers(db)
+	createTable()
+
+	tblUsers()
 
 	fmt.Println("Migration Finished...")
 }

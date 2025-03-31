@@ -7,14 +7,15 @@ import (
 	"net/http"
 )
 
-func Create(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	body, mgs := utils.HttpReq(r)
+func (c *UserController) Create(w http.ResponseWriter, r *http.Request) {
 
+	body, mgs := utils.HttpReq(r)
 	if body == nil {
-		utils.Response(map[string]interface{}{
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": mgs,
 		}, 500, w)
+
 		return
 	}
 
@@ -24,36 +25,40 @@ func Create(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	password, _ := body["password"].(string)
 	userStatus, _ := body["userStatus"].(string)
 
-	user := models.TblUsers{
+	user := models.Users{
 		FirstName:  firstName,
 		LastName:   lastName,
 		Email:      email,
-		Password:   utils.MakePassword(password),
+		Password:   password,
 		UserStatus: userStatus,
 	}
-	validate := validation.Validate()
-	err := validate.Struct(user)
 
-	if err != nil {
+	validate := validation.Validate()
+
+	if err := validate.Struct(user); err != nil {
 		errs := validation.GetErrors(err)
-		utils.Response(map[string]interface{}{
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": errs,
 		}, 200, w)
 		return
 	}
 
-	if err := user.Create(); err != nil {
-		utils.Response(map[string]interface{}{
+	hashPassword, _ := utils.HashPassword(password)
+	user.Password = hashPassword
+
+	userId, err := c.service.Create(&user)
+
+	if err != nil {
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": err.Error(),
 		}, 200, w)
 		return
 	}
 
-	utils.Response(map[string]interface{}{
+	utils.Response(map[string]any{
 		"statusCode": 200,
-		"devMessage": user.ID,
+		"devMessage": userId,
 	}, 200, w)
-
 }

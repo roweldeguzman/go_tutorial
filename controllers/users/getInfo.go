@@ -9,31 +9,32 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func GetInfo(w http.ResponseWriter, r *http.Request) {
+func (c *UserController) GetInfo(w http.ResponseWriter, r *http.Request) {
 	param := mux.Vars(r)
 	ID, isValidInt := strconv.Atoi(param["id"])
 
 	if isValidInt != nil {
-		utils.Response(map[string]interface{}{
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": "Unable to find user.",
 		}, 200, w)
 		return
 	}
 
-	user := models.TblUsers{
+	user := models.Users{
 		ID: uint(ID),
 	}
 
-	if err := user.GetInfo(); err != nil {
-		utils.Response(map[string]interface{}{
+	if err := c.service.GetInfo(&user); err != nil {
+		// if err := user.GetInfo(); err != nil {
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": err.Error(),
 		}, 200, w)
 		return
 	}
 
-	utils.Response(map[string]interface{}{
+	utils.Response(map[string]any{
 		"statusCode": 200,
 		"devMessage": user,
 	}, 200, w)

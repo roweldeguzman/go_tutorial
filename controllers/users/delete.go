@@ -6,17 +6,17 @@ import (
 	"net/http"
 )
 
-func Delete(w http.ResponseWriter, r *http.Request) {
+func (c *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 	body, mgs := utils.HttpReq(r)
 
 	if body == nil {
-		utils.Response(map[string]interface{}{
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": mgs,
 		}, 500, w)
 		return
 	}
-	IDS, _ := body["ids"].([]interface{})
+	IDS, _ := body["ids"].([]any)
 	var ids []uint
 	for _, id := range IDS {
 		ID, isValid := id.(float64)
@@ -25,20 +25,19 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	deletes := models.TblUserDelete{
+	deletes := models.UserDelete{
 		IDS: ids,
 	}
-	if err := deletes.Delete(); err != nil {
-		utils.Response(map[string]interface{}{
+	if err := c.service.Delete(&deletes); err != nil {
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": err.Error(),
 		}, 200, w)
 
 		return
 	}
-	utils.Response(map[string]interface{}{
+	utils.Response(map[string]any{
 		"statusCode": 200,
 		"devMessage": "success",
 	}, 200, w)
-
 }

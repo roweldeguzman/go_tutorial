@@ -1,23 +1,25 @@
 package utils
 
 import (
+	"api/struct/pagination"
 	"math"
 	"strconv"
 	"strings"
 )
 
-func Paginate(rows int, page int, total int) map[string]interface{} {
+func Paginate(rows int, page int, total int) pagination.PageInfo {
 
 	d := float64(total) / float64(rows)
-	return map[string]interface{}{
-		"currentPage": page,
-		"nextPage":    page + 1,
-		"prevPage":    page - 1,
-		"noOfPage":    math.Ceil(d),
+	pagination := pagination.PageInfo{
+		CurrentPage: page,
+		NextPage:    page + 1,
+		PrevPage:    page - 1,
+		TotalPages:  math.Ceil(d),
 	}
+	return pagination
 }
 
-func PagerTernary(val string, defVal int) int {
+func Ternary(val string, defVal int) int {
 	if strings.Trim(val, " ") == "" {
 		return defVal
 	}

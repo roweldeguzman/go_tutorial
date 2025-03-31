@@ -2,7 +2,6 @@ package routers
 
 import (
 	"api/authorization"
-	u "api/controllers/users"
 
 	"github.com/gorilla/mux"
 	"github.com/urfave/negroni"
@@ -10,17 +9,18 @@ import (
 
 func usersRoute(router *mux.Router) *mux.Router {
 
-	router.Handle("/v1/users/add",
-		negroni.New(
-			negroni.HandlerFunc(authorization.IsAuthorized),
-			negroni.HandlerFunc(u.Create),
-		)).
-		Methods("POST")
+	userRouter := mux.NewRouter().PathPrefix("/v1/users").Subrouter().StrictSlash(true)
+	userRouter.HandleFunc("/add", UserController.Create).Methods("POST")
+	userRouter.HandleFunc("/update", UserController.Update).Methods("PUT")
+	userRouter.HandleFunc("/delete", UserController.Delete).Methods("DELETE")
+	userRouter.HandleFunc("/get", UserController.Get).Methods("GET")
+	userRouter.HandleFunc("/get-info/{id}", UserController.GetInfo).Methods("GET")
+	userRouter.HandleFunc("/search", UserController.SearchUser).Methods("GET")
 
-	router.HandleFunc("/v1/users/update", u.Update).Methods("PUT")
-	router.HandleFunc("/v1/users/delete", u.Delete).Methods("DELETE")
-	router.HandleFunc("/v1/users/get", u.Get).Methods("GET")
-	router.HandleFunc("/v1/users/get-info/{id}", u.GetInfo).Methods("GET")
+	router.PathPrefix("/v1/users").Handler(negroni.New(
+		negroni.HandlerFunc(authorization.IsAuthorized),
+		negroni.Wrap(userRouter),
+	))
 
 	return router
 }

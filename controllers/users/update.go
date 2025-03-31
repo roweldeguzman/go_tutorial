@@ -7,11 +7,11 @@ import (
 	"net/http"
 )
 
-func Update(w http.ResponseWriter, r *http.Request) {
+func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	body, mgs := utils.HttpReq(r)
 
 	if body == nil {
-		utils.Response(map[string]interface{}{
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": mgs,
 		}, 500, w)
@@ -22,40 +22,39 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	firstName, _ := body["firstName"].(string)
 	lastName, _ := body["lastName"].(string)
 	email, _ := body["email"].(string)
-	password, _ := body["password"].(string)
 	userStatus, _ := body["userStatus"].(string)
 
-	user := models.TblUsers{
+	user := models.Users{
 		ID:         uint(id),
 		FirstName:  firstName,
 		LastName:   lastName,
 		Email:      email,
-		Password:   password,
 		UserStatus: userStatus,
+		Password:   "noValidate",
 	}
+
 	validate := validation.Validate()
 	err := validate.Struct(user)
 
 	if err != nil {
 		errs := validation.GetErrors(err)
-		utils.Response(map[string]interface{}{
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": errs,
 		}, 200, w)
 		return
 	}
 
-	if err := user.Update(); err != nil {
-		utils.Response(map[string]interface{}{
+	if err := c.service.Update(&user); err != nil {
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": err.Error(),
 		}, 200, w)
 		return
 	}
 
-	utils.Response(map[string]interface{}{
+	utils.Response(map[string]any{
 		"statusCode": 200,
 		"devMessage": user.ID,
 	}, 200, w)
-
 }
