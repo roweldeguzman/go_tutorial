@@ -48,7 +48,7 @@ func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 		utils.ErrorChecker(0, json.NewEncoder(w).Encode("Authorization header format must be Bearer {token}"))
 		return
 	}
-	token, err := jwt.Parse(authHeaderParts[1], func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(authHeaderParts[1], func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("There was an error in parsing")
 		}
@@ -70,14 +70,14 @@ func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	utils.ErrorChecker(0, json.NewEncoder(w).Encode("Not Authorized"))
 }
 
-func GetClaim(r *http.Request) map[string]interface{} {
+func GetClaim(r *http.Request) map[string]any {
 	var mySigningKey = []byte(secretKey)
 	authHeader := r.Header.Get("Authorization")
 	authHeaderParts := strings.Fields(authHeader)
 	if len(authHeaderParts) != 2 || strings.ToLower(authHeaderParts[0]) != "bearer" {
 		return nil
 	}
-	token, err := jwt.Parse(authHeaderParts[1], func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(authHeaderParts[1], func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("There was an error in parsing")
 		}

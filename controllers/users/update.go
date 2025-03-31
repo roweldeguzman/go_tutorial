@@ -11,7 +11,7 @@ func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	body, mgs := utils.HttpReq(r)
 
 	if body == nil {
-		utils.Response(map[string]interface{}{
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": mgs,
 		}, 500, w)
@@ -38,7 +38,7 @@ func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		errs := validation.GetErrors(err)
-		utils.Response(map[string]interface{}{
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": errs,
 		}, 200, w)
@@ -46,14 +46,14 @@ func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.service.Update(&user); err != nil {
-		utils.Response(map[string]interface{}{
+		utils.Response(map[string]any{
 			"statusCode": 500,
 			"devMessage": err.Error(),
 		}, 200, w)
 		return
 	}
 
-	utils.Response(map[string]interface{}{
+	utils.Response(map[string]any{
 		"statusCode": 200,
 		"devMessage": user.ID,
 	}, 200, w)
