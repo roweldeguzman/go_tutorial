@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	userRepository = repository.NewUserRepository()
-	userService    = service.NewUserService(userRepository)
-	UserController = controller.NewUserController(userService)
+	usersRepository = repository.NewUsersRepository()
+	usersService    = service.NewUsersService(usersRepository)
+	UsersController = controller.NewUserController(usersService)
 )
 
 func LoadRouter() *mux.Router {

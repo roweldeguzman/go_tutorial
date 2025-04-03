@@ -7,7 +7,6 @@ import (
 	"api/service"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"testing"
@@ -17,10 +16,10 @@ import (
 )
 
 var (
-	userRepository = repository.NewUserRepository()
-	userService    = service.NewUserService(userRepository)
-	UserController = user.NewUserController(userService)
-	authController = controller.NewAuthController(userService)
+	usersRepository = repository.NewUsersRepository()
+	usersService    = service.NewUsersService(usersRepository)
+	UsersController = user.NewUserController(usersService)
+	authController  = controller.NewAuthController(usersService)
 )
 
 func tearDown(t *testing.T, id string) {
@@ -28,7 +27,7 @@ func tearDown(t *testing.T, id string) {
 	request, _ := http.NewRequest("DELETE", "/v1/users/delete", bytes.NewBuffer(jsonStr))
 	request.Header.Set("Content-Type", "application/json")
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		UserController.Delete(w, r)
+		UsersController.Delete(w, r)
 	})
 
 	response := executeRequest(request, handler)
@@ -43,7 +42,10 @@ func tearDown(t *testing.T, id string) {
 
 func TestLogin(t *testing.T) {
 
-	var jsonStr = []byte(`{"email":"rowel@gmail.com", "password": "admin"}`)
+	var jsonStr = []byte(`{
+		"email":"rowel@gmail.com",
+		"password": "admin"
+	}`)
 	request, _ := http.NewRequest("POST", "/v1/auth/login", bytes.NewBuffer(jsonStr))
 	request.Header.Set("Content-Type", "application/json")
 	handler := http.HandlerFunc(authController.Login)
@@ -62,12 +64,22 @@ func TestLogin(t *testing.T) {
 }
 
 func TestCreates(t *testing.T) {
+	firstName := faker.FirstName()
+	lastName := faker.LastName()
+	email := faker.Email()
 
-	var jsonStr = []byte(`{"firstName":"Rowel", "lastName": "de Guzman", "email": "` + faker.Email() + `", "password": "password1",  "userStatus": "1"}`)
+	var jsonStr = []byte(`{
+		"firstName":"` + firstName + `",
+		"lastName": "` + lastName + `",
+		"email": "` + email + `",
+		"password": "password1",
+		"userStatus": "1"
+	}`)
+
 	request, _ := http.NewRequest("POST", "/v1/users/add", bytes.NewBuffer(jsonStr))
 	request.Header.Set("Content-Type", "application/json")
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		UserController.Create(w, r)
+		UsersController.Create(w, r)
 	})
 
 	response := executeRequest(request, handler)
@@ -79,12 +91,16 @@ func TestCreates(t *testing.T) {
 		t.Errorf("Unexpected response body found")
 	}
 	if m["statusCode"] != float64(200) {
+
 		t.Errorf("Wrong status code. expecting 200, receive %v", m["statusCode"])
 	}
 
 	devMessage := m["devMessage"].(map[string]any)
 
-	fmt.Println(devMessage)
+	assert.Equal(t, firstName, devMessage["firstName"])
+	assert.Equal(t, lastName, devMessage["lastName"])
+	assert.Equal(t, email, devMessage["email"])
+
 	id, _ := devMessage["id"].(float64)
 	tearDown(t, strconv.Itoa(int(id)))
 
@@ -97,7 +113,7 @@ func TestGetUsers(t *testing.T) {
 	query.Add("page", "2")
 	request.URL.RawQuery = query.Encode()
 
-	handler := http.HandlerFunc(UserController.Get)
+	handler := http.HandlerFunc(UsersController.Get)
 	response := executeRequest(request, handler)
 
 	var m map[string]any

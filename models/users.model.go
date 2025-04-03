@@ -12,15 +12,27 @@ type Users struct {
 	LastName   string `json:"lastName" gorm:"type:varchar(255)" validate:"required"`
 	Email      string `json:"email" gorm:"type:varchar(255)" validate:"required,email"`
 	Password   string `json:"-" gorm:"type:varchar(255)" validate:"validPassword"`
-	UserStatus string `json:"-" gorm:"type:ENUM('0', '1') default '0' comment '0=For verification, 1=Verified User'"`
+	UserStatus string `json:"-" gorm:"type:varchar(2) default '0'"`
+	// UserStatus string `json:"-" gorm:"type:ENUM('0', '1') default '0' comment '0=For verification, 1=Verified User'"`
 	DateModel
 }
+
+// type userStatus uint
+
+// const (
+// 	forConfirmation userStatus = 0 // Represents a user pending confirmation
+// 	active          userStatus = 1 // Represents a user user is active
+// 	inActive        userStatus = 2 // Represents a user user is block
+// )
 
 type UserDelete struct {
 	IDS []uint
 }
 
 func (c *Users) BeforeCreate(tx *gorm.DB) (err error) {
+	// if c.UserStatus == 0 {
+	// 	c.UserStatus = forConfirmation
+	// }
 
 	ctx := DB.Where("email = ?", c.Email).Find(&c)
 
