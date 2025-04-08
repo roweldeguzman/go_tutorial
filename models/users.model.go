@@ -13,7 +13,8 @@ type Users struct {
 	Email      string `json:"email" gorm:"type:varchar(255)" validate:"required,email"`
 	Password   string `json:"-" gorm:"type:varchar(255)" validate:"validPassword"`
 	UserStatus string `json:"-" gorm:"type:varchar(2) default '0'"`
-	// UserStatus string `json:"-" gorm:"type:ENUM('0', '1') default '0' comment '0=For verification, 1=Verified User'"`
+	Post       []Posts
+
 	DateModel
 }
 

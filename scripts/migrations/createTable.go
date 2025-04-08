@@ -7,7 +7,8 @@ import (
 
 func createTable() {
 	var tableList = map[string]any{
-		"user": &models.Users{},
+		// "users": &models.Users{},
+		"posts": &models.Posts{},
 	}
 
 	for _, table := range tableList {
