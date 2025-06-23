@@ -6,7 +6,7 @@ type PostsController struct {
 	service *service.PostsService
 }
 
-func NewPostController(service *service.PostsService) *PostsController {
+func NewUserController(service *service.PostsService) *PostsController {
 
 	return &PostsController{service}
 }

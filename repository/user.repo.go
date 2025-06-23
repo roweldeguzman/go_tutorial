@@ -4,13 +4,16 @@ import (
 	"api/models"
 	"api/struct/pagination"
 	"errors"
+
+	"gorm.io/gorm"
 )
 
 type UsersRepository struct {
+	db *gorm.DB
 }
 
-func NewUsersRepository() *UsersRepository {
-	return &UsersRepository{}
+func NewUsersRepository(db *gorm.DB) *UsersRepository {
+	return &UsersRepository{db: db}
 }
 
 func (r *UsersRepository) Create(user *models.Users) (*models.Users, error) {

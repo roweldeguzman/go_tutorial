@@ -2,6 +2,7 @@ package database
 
 import (
 	"api/config"
+	"fmt"
 	"log"
 	"os"
 
@@ -12,6 +13,46 @@ import (
 )
 
 var DB *gorm.DB
+
+type Database struct {
+	DB *gorm.DB
+}
+
+func NewDatabaseConnection() (*Database, error) {
+	var err error
+
+	dsn := "host=" + config.DB_HOST + " user=" + config.DB_USER + " password=" + config.DB_PASSWORD + " dbname=" + config.DB_NAME + " port=5432 sslmode=disable TimeZone=Asia/Manila"
+
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags),
+		logger.Config{
+			LogLevel:                  logger.Info,
+			IgnoreRecordNotFoundError: true,
+		},
+	)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
+		Logger: newLogger,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
+	}
+
+	log.Println("Database connected and migrated successfully")
+
+	return &Database{DB: db}, nil
+}
+
+func (d *Database) Close() error {
+	sqlDB, err := d.DB.DB()
+	if err != nil {
+		return err
+	}
+	return sqlDB.Close()
+}
 
 func Open() error {
 

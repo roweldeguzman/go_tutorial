@@ -1,7 +1,6 @@
 package server
 
 import (
-	"api/database"
 	"api/models"
 	"api/repository"
 	"api/routers"
@@ -12,20 +11,14 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"github.com/urfave/negroni"
+	"gorm.io/gorm"
 )
 
 type App struct {
 	Router *mux.Router
 }
 
-func initDatabase() {
-
-	if err := database.Open(); err != nil {
-		panic("Fail to connect to database")
-	}
-}
-
-func (app *App) Initialize() {
+func (app *App) Initialize(db *gorm.DB) {
 
 	c := cors.New(cors.Options{
 		AllowCredentials:   true,
@@ -35,10 +28,8 @@ func (app *App) Initialize() {
 		AllowedOrigins:     []string{"*"},
 	})
 
-	initDatabase()
-
-	models.DB = database.DB
-	repository.DB = database.DB
+	models.DB = db
+	repository.DB = db
 
 	app.Router = routers.LoadRouter()
 

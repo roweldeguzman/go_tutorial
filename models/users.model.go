@@ -7,33 +7,28 @@ import (
 )
 
 type Users struct {
-	ID         uint   `json:"id" gorm:"primaryKey"`
-	FirstName  string `json:"firstName" gorm:"type:varchar(255)" validate:"required,min=3"`
-	LastName   string `json:"lastName" gorm:"type:varchar(255)" validate:"required"`
-	Email      string `json:"email" gorm:"type:varchar(255)" validate:"required,email"`
-	Password   string `json:"-" gorm:"type:varchar(255)" validate:"validPassword"`
-	UserStatus string `json:"-" gorm:"type:varchar(2) default '0'"`
-	Post       []Posts
+	ID         uint    `json:"id" gorm:"primaryKey"`
+	FirstName  string  `json:"firstName" gorm:"type:varchar(255)" validate:"required,min=3"`
+	LastName   string  `json:"lastName" gorm:"type:varchar(255)" validate:"required"`
+	Email      string  `json:"email" gorm:"type:varchar(255)" validate:"required,email"`
+	Password   string  `json:"-" gorm:"type:varchar(255)" validate:"validPassword"`
+	UserStatus string  `json:"-" gorm:"type:varchar(2) default '0'"`
+	Post       []Posts `gorm:"foreignKey:user_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 
 	DateModel
 }
 
-// type userStatus uint
+type ID string
 
-// const (
-// 	forConfirmation userStatus = 0 // Represents a user pending confirmation
-// 	active          userStatus = 1 // Represents a user user is active
-// 	inActive        userStatus = 2 // Represents a user user is block
-// )
+func (i ID) String() string {
+	return string(i)
+}
 
 type UserDelete struct {
 	IDS []uint
 }
 
 func (c *Users) BeforeCreate(tx *gorm.DB) (err error) {
-	// if c.UserStatus == 0 {
-	// 	c.UserStatus = forConfirmation
-	// }
 
 	ctx := DB.Where("email = ?", c.Email).Find(&c)
 

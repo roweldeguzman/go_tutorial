@@ -5,6 +5,7 @@ import (
 	"api/models"
 	"api/service"
 	"api/utils"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -55,6 +56,7 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(user)
 	token, err := authorization.GenerateJWT(map[string]any{
 		"email": user.Email,
 		"id":    user.ID,

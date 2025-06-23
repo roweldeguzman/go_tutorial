@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api/database"
 	"api/server"
 	"fmt"
 )
@@ -10,7 +11,14 @@ func main() {
 
 	defer cleanUp()
 
-	app.Initialize()
+	db, err := database.NewDatabaseConnection()
+	if err != nil {
+		fmt.Println("Error connecting to database:", err)
+		return
+	}
+	defer db.Close()
+
+	app.Initialize(db.DB)
 	app.Run(":9999")
 }
 

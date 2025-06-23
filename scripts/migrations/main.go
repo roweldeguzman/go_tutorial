@@ -28,7 +28,7 @@ func main() {
 	defer database.Close()
 	createTable()
 
-	// tblUsers()
+	tblUsers()
 
 	fmt.Println("Migration Finished...")
 }
